@@ -102,6 +102,50 @@ static void fo_write_fail_only_second_time(void)
 
 
 /* ==========================================================================
+    yeah I know strcpy() cannot really fail, but it just to test whether
+    libfo returns correct pointer
+   ========================================================================== */
+
+
+static void fo_pointer_return_error(void)
+{
+    char buf0[2];
+    char buf1[2];
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+    fo_fail(fo_strcpy, 1, FO_NULL, EINVAL);
+    mt_fail(strcpy(buf0, buf1) == NULL);
+    mt_fail(errno == EINVAL);
+}
+
+
+/* ==========================================================================
+    check if libfo returns our custom pointer
+   ========================================================================== */
+
+
+static void fo_pointer_return_custom(void)
+{
+    char buf0[] = "string message";
+    char buf1[] = "another";
+    char buf2[] = "yet another";
+    char *buf3;
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+    fo_fail(fo_strcpy, 1, (intptr_t)buf0, 0);
+    mt_fail((buf3 = strcpy(buf1, buf2)) == buf0);
+    mt_fail(strcmp(buf3, "string message") == 0);
+
+    /* buf1 should not have been altered by libfo
+     */
+
+    mt_fail(strcmp(buf1, "another") == 0);
+}
+
+
+/* ==========================================================================
                                               _
                            ____ ___   ____ _ (_)____
                           / __ `__ \ / __ `// // __ \
@@ -118,6 +162,8 @@ int main(void)
     mt_run(fo_test_original_after_init);
     mt_run(fo_write_fail);
     mt_run(fo_write_fail_only_second_time);
+    mt_run(fo_pointer_return_error);
+    mt_run(fo_pointer_return_custom);
 
     mt_return();
 }

@@ -179,8 +179,9 @@ EOF
 include_list="$(mktemp)"
 echo "errno.h" > "${include_list}"
 echo "stdio.h" >> "${include_list}"
-echo "stdlib.h" >> "${include_list}"
 echo "dlfcn.h" >> "${include_list}"
+echo "stdint.h" >> "${include_list}"
+echo "stdlib.h" >> "${include_list}"
 while read -r line
 do
     includes="$(echo "${line}" | cut -f1 -d,)"
@@ -225,22 +226,22 @@ struct fo_info
      * function for more details
      */
 
-    int    countdown;
+    int        countdown;
 
     /* value to return when spoofed function is called
      */
 
-    int    ret;
+    intptr_t   ret;
 
     /* errno to set when spoofed function is called
      */
 
-    int    errn;
+    int        errn;
 
     /* pointer to original function
      */
 
-    void  *original;
+    void      *original;
 };
 
 /* array of all functions information
@@ -348,10 +349,10 @@ cat >> "${outc}" << EOF
 
 int fo_fail
 (
-    int  function,    /* function to override */
-    int  countdown,   /* after how many calls trigger error */
-    int  ret,         /* value to return upon error */
-    int  errn         /* errno to be set upon error */
+    int       function,    /* function to override */
+    int       countdown,   /* after how many calls trigger error */
+    intptr_t  ret,         /* value to return upon error */
+    int       errn         /* errno to be set upon error */
 )
 {
     if (function >= fo_f_max)
@@ -489,7 +490,7 @@ EOF
      */
 
     errno = fo_info[fo_${func}].errn;
-    return fo_info[fo_${func}].ret;
+    return (${rett})fo_info[fo_${func}].ret;
 }
 EOF
 done < "${fl}"
@@ -509,6 +510,10 @@ cat > "${outh}" << EOF
 #ifndef BOFC_FO_H
 #define BOFC_FO_H 1
 
+#include <stdint.h>
+
+#define FO_NULL ((intptr_t)NULL)
+
 enum fo_f
 {
 EOF
@@ -523,7 +528,7 @@ cat >> "${outh}" << EOF
 };
 
 void fo_init(void);
-int fo_fail(int function, int countdown, int ret, int errn);
+int fo_fail(int function, int countdown, intptr_t ret, int errn);
 
 #endif
 EOF

@@ -10,5 +10,6 @@ sys/types.h;sys/socket.h,ssize_t,send,int,const void *,size_t,int
 sys/types.h;sys/socket.h,ssize_t,sendto,int,const void *,size_t,int,const struct sockaddr *,socklen_t
 sys/types.h;sys/socket.h,ssize_t,sendmsg,int,const struct msghdr *,int
 sys/types.h;sys/socket.h,ssize_t,recv,int,void *,size_t,int
-sys/types.h;sys/socket.h,ssize_t,recvfrom,int,void *,size_t, int,struct sockaddr *,socklen_t *
+sys/types.h;sys/socket.h,ssize_t,recvfrom,int,void *,size_t,int,struct sockaddr *,socklen_t *
 sys/types.h;sys/socket.h,ssize_t,recvmsg,int,struct msghdr *,int
+string.h,char *,strcpy,char *,const char *
