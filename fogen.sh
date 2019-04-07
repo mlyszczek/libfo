@@ -6,12 +6,11 @@
 
 print_usage()
 {
-    echo "usage: ${0} (-df | -l) [-o]"
+    echo "usage: ${0} -d [-l] [-o]"
     echo ""
     echo "where:"
     echo "    -d<file>      database with function information"
-    echo "    -f<file>      file with list of function to generate code for"
-    echo "    -l<file>      csv function information to generate code for"
+    echo "    -l<file>      file with list of functions to generate code for"
     echo "    -o<file>      name of output file (without extension)"
     #echo ""
     #echo "check fogen(1) for details and better description"
@@ -23,7 +22,7 @@ fl=
 outc=
 outh=
 
-while getopts ":d:f:l:o:hv" opt
+while getopts ":d:l:o:hv" opt
 do
     case "${opt}" in
         d)
@@ -34,25 +33,12 @@ do
             fdb="${OPTARG}"
             ;;
 
-        f)
+        l)
             ###
             # list with functions to gen code for
             #
 
             flist="${OPTARG}"
-            ;;
-
-        l)
-            ###
-            # function list, csv file with functions to generate,
-            # it's different from flist in that, that flist contains
-            # only function names, and fl is fdb with only entries
-            # to generate code for
-            #
-            # if this is not passed, fl is generated from fdb and flist
-            #
-
-            fl="${OPTARG}"
             ;;
 
         o)
@@ -83,9 +69,9 @@ do
     esac
 done
 
-if [ -z "${fdb}" ] && [ -z "${flist}" ] && [ -z "${fl}" ]
+if [ -z "${fdb}" ]
 then
-    echo "no data to generate code from, use -d -f or -l"
+    echo "missing database file (-d)"
     echo ""
     print_usage
     exit 1
@@ -97,34 +83,35 @@ then
     outh="fo.h"
 fi
 
-if [ -n "${fdb}" ]
+if [ ! -f "${fdb}" ]
 then
-    if [ ! -f "${fdb}" ]
-    then
-        echo "function database ${fdb} does not exist"
-        exit 1
-    fi
+    echo "function database ${fdb} does not exist"
+    exit 1
+fi
 
-    if [ ! -f "${flist}" ]
-    then
-        echo "function list ${flist} does not exist"
-        exit 1
-    fi
+if [ -n "${flist}" ] && [ ! -f "${flist}" ]
+then
+    echo "function list ${flist} does not exist"
+    exit 1
 fi
 
 echo "function database....: ${fdb}"
-echo "function list........: ${flist}"
 echo "out file.............: ${outc}"
 
 ###
-# if user didn't passe fl then generate csv with function to
-# generate
+# generate csv with function to generate
 #
 
-if [ -z "${fl}" ]
+fl="$(mktemp)"
+to_remove="${fl}"
+
+if [ -n "${flist}" ]
 then
-    fl="$(mktemp)"
-    to_remove="${fl}"
+    ###
+    # flist is defined - generate code only for functions listed
+    # in that flist file
+    #
+
     while read -r function
     do
         if ! grep "${function}" "${fdb}" >> "${fl}"
@@ -141,11 +128,13 @@ then
     done < "${flist}"
 else
     ###
-    # fl is passed, so we need to generate flist
+    # flist is no defined, we will be generating code for all
+    # functions defined in database
     #
 
+    cp "${fdb}" "${fl}"
     flist="$(mktemp)"
-    to_remove="${flist}"
+    to_remove+=" ${flist}"
     while read -r line
     do
         echo "${line}" | cut -f3 -d, >> "${flist}"
@@ -533,4 +522,5 @@ int fo_fail(int function, int countdown, intptr_t ret, int errn);
 #endif
 EOF
 
+IFS=' '
 rm -f -- ${to_remove}
