@@ -1,0 +1,67 @@
+.TH "fo_init" "3" "03 April 2019 (v0.1.0)" "bofc.pl"
+.SH NAME
+.PP
+.B fo_init
+- initializes libfo to work.
+.SH SYNOPSIS
+.PP
+.BI "#include \(dqfo.h\(dq"
+.PP
+.B "void fo_init(void)"
+.SH DESCRIPTION
+.PP
+.BR libfo (7)
+initializes internal structures so function wrappers can work properly.
+It's crucial that this function is called as early as possible, best to call
+it first thing after main().
+It's because
+.BR fo_init (3)
+looks for original functions and stores their pointers in internal structure, so
+if you have overriden
+.BR write ()
+and you would call
+.BR write ()
+before caling
+.BR fo_init (3)
+your program will most probably segfault.
+.PP
+.BR fo_init (3)
+can be called multiple times, just note that all internal structures will be
+set back to initial state, so if you have installed some point of failure with
+.BR fo_fail (3)
+and then call
+.BR fo_init (3)
+your point of failure will reset and function will not return error.
+.SH RETURN VALUE
+Function does not return anything, but calls
+.BR exit ()
+when it fails to get pointer to original function with
+.BR dlsym ().
+This is because, when
+.BR dlsym ()
+fails, pointer to original function will be set to
+.B NULL
+which will lead to segfauly anyway, so it's better to crash program in known
+place to quickly find where error originates.
+Function will also print to standard error reason why
+.BR dlsym ()
+failed.
+.SH EXAMPLE
+.PP
+.nf
+    #include "fo.h"
+
+    int main(void)
+    {
+        fo_init();
+
+        /* run your test code */
+
+        return 0;
+    }
+.fi
+.SH SEE ALSO
+.PP
+.BR fogen (1),
+.BR fo_fail (3),
+.BR libfo (7).

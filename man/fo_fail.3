@@ -1,0 +1,167 @@
+.TH "fo_fail" "3" "03 April 2019 (v0.1.0)" "bofc.pl"
+.SH NAME
+.PP
+.B fo_fail
+- configures new point of failure to occur.
+.SH SYNOPSIS
+.PP
+.BI "#include \(dqfo.h\(dq"
+.PP
+.BI "#define " FO_NULL " ((intptr_t)NULL)
+.br
+.BI "void fo_fail(int " function ", int " countdown ", intptr_t " ret ", \
+int " errn ");"
+.SH DESCRIPTION
+.PP
+A little note, each time I say
+.I function
+will fail I mean that
+.B libfo
+will not call original function, but instead will return previously configured
+value.
+When
+.B libfo
+calls original function it still may fail - but on its own accord without help
+from
+.BR libfo .
+.PP
+.BR fo_fail (3)
+installs new point of failure causing
+.I function
+to fail in
+.I countdown
+calls with
+.I ret
+return value and errno set to
+.IR errn .
+.PP
+.I functions
+is integer value representing function that should fail.
+List of functions is defined in generated
+.B fo.h
+file, and is in form
+.BI fo_ function .
+So if you want
+.BR write ()
+to fail, you'd pass
+.B fo_write
+as first argument.
+.PP
+.I countdown
+describes when
+.I function
+should fails.
+Each call to overriden function decrements
+.I countdown
+value, and if that value hits 0, then configured error is returned, otherwise
+original function is called.
+So if you pass 1, next call to
+.I function
+will fail, if you set 3, then third call will fail, and first and second call
+will call original function.
+If you set
+.I countdown
+to 0, then
+.B function
+will never fail.
+When
+.I countdown reaches 0 and
+.I function
+fails, then next calls will no longer fail until next
+.BR fo_fail (3)
+is called.
+.PP
+.I ret
+is value that will be returned when
+.I function
+fails.
+You can pass here integer value (like "-1") or pointer (like &foo or NULL).
+If you pass pointer you need to cast it to
+.B intptr_t
+or else compiler might emit warnings.
+There is
+.B FO_NULL
+macro provided for convenience, which can be used to configure setpoint to
+return
+.B NULL
+pointer on errors.
+Note that
+.BR fo_fail (3)
+does not have to necessarily be used to return error cases, it could be used
+for example to force
+.BR fileno ()
+to return specific file descriptor that is configured to trigger specific
+reaction.
+For that you would just set
+.I ret
+to positive value like "5".
+.PP
+When
+.I function
+fails
+.B errno
+variable will be set to
+.I errn
+value.
+.SH RETURN VALUES
+.PP
+Function will return 0 on success. -1 with errno will be returned upon error.
+.SH ERRORS
+.PP
+.TP
+.B EINVAL
+.I countdown
+is less than 0.
+.TP
+.B ENOENT
+.I function
+number does not exist.
+This won't happen if you use
+.BI fo_ function
+enum values (which you really should anyway).
+.SH EXAMPLE
+.PP
+OK and FAIL are imaginary macros. OK means we expect function to finish with
+success, and with FAIL we expect function to return error.
+.PP
+.nf
+    #include "fo.h"
+
+    int main(void)
+    {
+        fo_init();
+
+        /* first write() fails and no more */
+        fo_fail(fo_write, 1, -1, EINVAL);
+        FAIL(write(fd, buf, 2), EINVAL);
+        OK(write(fd, buf, 2));
+        OK(write(fd, buf, 2));
+
+        /* third write() called shall fails */
+        fo_fail(fo_write, 3, -1, ENOSYS);
+        OK(write(fd, buf, 2));
+        OK(write(fd, buf, 2));
+        FAIL(write(fd, buf, 2), ENOSYS);
+        OK(write(fd, buf, 2));
+
+        /* emulate no memory error from strdup */
+        fo_fail(fo_strdup, 1, FO_NULL, ENOMEM);
+        FAIL((s1 = strdup(s2)), ENOMEM);
+
+        /* make fileno() to return preconfigured fd */
+        fo_fail(fo_fileno, 1, 3, 0);
+        /* fileno() will succed and return 3 */
+        OK(fd = fileno(f));
+
+        /* fail custom function from custom lib */
+        mt_fail(fo_libcustom_foo, 1, -1, ENOENT);
+        FAIL(libcustom_foo(), ENOENT);
+
+        return 0;
+    }
+.fi
+.SH SEE ALSO
+.PP
+.BR fogen (1),
+.BR fo_init (3),
+.BR libfo (7).

@@ -1,0 +1,98 @@
+.TH "fogen" "1" "03 April 2019 (v0.1.0)" "bofc.pl"
+.SH NAME
+.PP
+.B fogen
+- generates
+.B C
+code with configured functions to override.
+.SH SYNOPSIS
+.PP
+.BI fogen\  -d\  [ -l ]\ [ -o ]
+.SH DESCRIPTION
+.PP
+.TP
+.BI -d< file >
+Path to a database file which contains information about functions that will be
+overriden in generated C code.
+For more information about database format, check
+.B DATABASE
+chapter later in this manpage.
+.TP
+.BI -l< file >
+Path to a file with new-line separated list of functions that will be overriden
+in generated C code.
+This list should be a subset of
+.B database
+file (passed with -d).
+If this is not passed, C code will be generated using all functions from
+.B database
+file.
+So if
+.B database
+file contains functions "write, read, close" and
+.B function_list
+(-l argument) contains only "write" function in it, then code will be generated
+only with overriden function "write".
+This is usefull when passed
+.B database
+is big and you only need to override a handfull of functions and don't want
+to generate big file (that will only extend compilation time).
+.TP
+.BI -o< name >
+By default, program will generate code in files called
+.B fo.c
+and
+.BR fo.h .
+With this option you can pass your own name (without extension).
+So just pass
+.I bar
+if you want generated files to be called
+.I bar.c
+and
+.IR bar.h .
+.SH "DATABASE FILE"
+.PP
+Database is simple csv file in format:
+.PP
+.nf
+    include[;list],return-type,function-name,argument-type1[,argument-type2]
+.fi
+.PP
+.I include\ list
+is a list of all includes files that function requires for compiler to know
+all argument types and declaration of function itself (to avoid implicit
+declaration errors).
+It's if single include file is provided multiple times,
+.B fogen
+will remove any superflous include.
+Files should be separated with semicolon (;) character.
+.PP
+.I return\ type
+This doesn't need much explanation, it's just return type of original function.
+.PP
+.I function\ name
+Another self explanatory field - name of original function, no prefixes, no
+suffixes, just funciton name.
+.PP
+.I argument\ type\ list
+Comma (,) separated list of input arguments of
+.I function
+to override.
+Obviously must be in order of original function's arguments.
+.PP
+Check out this small example to understand better the format
+.PP
+.nf
+    unistd.h,int,close,int
+    unistd.h,ssize_t,read,int,void *,size_t
+    sys/types.h;sys/socket.h,int,bind,int,const struct sockaddr *,socklen_t
+    sys/types.h;sys/socket.h,ssize_t,recv,int,void *,size_t,int
+.fi
+.SH RETURN VALUE
+.PP
+Program will return 0 on success, and 1 on errors.
+.SH SEE ALSO
+.PP
+.BR fo_init (3),
+.BR fo_fail (3),
+.BR libfo (7).

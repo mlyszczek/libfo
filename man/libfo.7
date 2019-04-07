@@ -1,0 +1,80 @@
+.TH "libfo" "7" "03 April 2019 (v0.1.0)" "bofc.pl"
+.SH SYNOPSIS
+.PP
+.B libfo
+is a tiny library that allows user to simulate errors of
+.BR POSIX ,
+.B libc
+and
+any other functions you will add.
+.SH DESCRIPTION
+.PP
+.B libfo
+is a library designed to override any function (including those from
+.B POSIX
+and
+.BR libc )
+to create rquested point of failures.
+Library does not required to make any changes in production code, everything
+is done from test suite.
+Library is designed in a way, that you generate code once and integrate it
+directly into your project.
+Yes, you can build shared object and install it somewhere in
+.BR PATH ,
+but then you won't be able to run tests on machines which does not provide
+.B libfo
+or that instance of
+.B libfo
+does not have overriden function you might need.
+It's not worth it.
+.SH INTEGRATING LIBFO IN YOUR PROJECT
+.PP
+First (and optionally) you might want to create file with all functions you
+might want to create point of failure for.
+Functions should be separated by newline like this
+.PP
+.nf
+    $ cat flist
+    write
+    read
+    socket
+.fi
+.PP
+Next you need to generate
+.B fo.c
+and
+.B fo.h
+that will be incuded in your project.
+Check
+.BR fogen (1)
+program for details on how to generate those files.
+.PP
+Copy generated files
+.B fo.c
+and
+.B fo.h
+somewhere to your testing directory and configure your build system to create
+shared object from
+.BR fo.c .
+This step is important, library needs to be built separately and as shared
+object for everything to work.
+.PP
+Install some point of failures with
+.BR fo_fail (3)
+and write some test code with it.
+.PP
+When you run your test program, remember to run it with
+.B LD_PRELOAD=libfo.so
+(path may vary) so all functions are overriden by
+.BR libfo .
+.PP
+You might want to take a look at "tst" directory in
+.B libfo
+sources, test case is super small and easy (there really isn't much to test)
+to understand how to run tests with
+.BR libfo .
+.SH SEE ALSO
+.PP
+.BR fogen (1),
+.BR fo_init (3),
+.BR fo_fail (3).
