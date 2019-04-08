@@ -53,4 +53,4 @@ install:
 	install -m0644 -D man/fo_fail.3 $(DESTDIR)/share/man/man3/fo_fail.3
 	install -m0644 -D man/libfo.7   $(DESTDIR)/share/man/man7/libfo.7
 
-.PHONY: www
+.PHONY: www all check dist distclean clean install

@@ -7,3 +7,5 @@ clean:
 	$(RM) -r out
 	$(RM) -r manuals
 	$(RM) downloads.html
+
+.PHONY: www clean

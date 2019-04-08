@@ -19,3 +19,5 @@ clean:
 	rm -f fo.o
 	rm -f libfo.so
 	rm -f fo-test
+
+.PHONY: clean check
