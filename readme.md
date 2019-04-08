@@ -130,6 +130,17 @@ Convinced? I'm glad. I don't like repeating myself, so to know more about
 library itself and how to use it, please check
 [libfo](https://libfo.kurwinet.pl/manuals/libfo.7.html)(7) manual page.
 
+Installing
+==========
+
+Package can be installed to system with classic (which accepts DESTDIR envvar)
+
+~~~
+make install
+~~~
+
+This will install only **fogen** program and manual pages for quick access.
+
 Downloads
 =========
 
