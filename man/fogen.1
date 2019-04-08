@@ -85,9 +85,22 @@ Check out this small example to understand better the format
 .nf
     unistd.h,int,close,int
     unistd.h,ssize_t,read,int,void *,size_t
-    sys/types.h;sys/socket.h,int,bind,int,const struct sockaddr *,socklen_t
+    sys/types.h;sys/socket.h,ssize_t,recvmsg,int,struct msghdr *,int
     sys/types.h;sys/socket.h,ssize_t,recv,int,void *,size_t,int
 .fi
+.PP
+To make this pile of unreadable csv more readable,
+.BR fogen (1)
+ignores all trailing and leading spaces in fields, so above example can be
+written in much, much more readable way as:
+.PP
+.nf
+    unistd.h,                   int,        close,      int
+    unistd.h,                   ssize_t,    read,       int,void *,size_t
+    sys/types.h;sys/socket.h,   ssize_t,    recvmsg,    int,struct msghdr *,int
+    sys/types.h;sys/socket.h,   ssize_t,    recv,       int,void *,size_t,int
+.fi
+
 .SH RETURN VALUE
 .PP
 Program will return 0 on success, and 1 on errors.
