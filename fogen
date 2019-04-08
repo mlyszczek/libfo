@@ -16,6 +16,7 @@ print_usage()
     #echo "check fogen(1) for details and better description"
 }
 
+version="0.1.0"
 fdb=
 flist=
 fl=
@@ -56,7 +57,7 @@ do
             ;;
 
         v)
-            echo "fogen v0.1.0"
+            echo "fogen v${version}"
             echo "by Michał Łyszczek <michal.lyszczek@bofc.pl>"
             exit 0
             ;;

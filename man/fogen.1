@@ -7,19 +7,19 @@
 code with configured functions to override.
 .SH SYNOPSIS
 .PP
-.BI fogen\  -d\  [ -l ]\ [ -o ]
+.BI fogen\  -d \ [ -l ]\ [ -o ]
 .SH DESCRIPTION
 .PP
 .TP
 .BI -d< file >
 Path to a database file which contains information about functions that will be
-overriden in generated C code.
+overridden in generated C code.
 For more information about database format, check
 .B DATABASE
 chapter later in this manpage.
 .TP
 .BI -l< file >
-Path to a file with new-line separated list of functions that will be overriden
+Path to a file with new-line separated list of functions that will be overridden
 in generated C code.
 This list should be a subset of
 .B database
@@ -32,7 +32,7 @@ So if
 file contains functions "write, read, close" and
 .B function_list
 (-l argument) contains only "write" function in it, then code will be generated
-only with overriden function "write".
+only with overridden function "write".
 This is usefull when passed
 .B database
 is big and you only need to override a handfull of functions and don't want

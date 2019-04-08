@@ -5,7 +5,7 @@
 - initializes libfo to work.
 .SH SYNOPSIS
 .PP
-.BI "#include \(dqfo.h\(dq"
+.BI #include\ "fo.h"
 .PP
 .B "void fo_init(void)"
 .SH DESCRIPTION
@@ -17,7 +17,7 @@ it first thing after main().
 It's because
 .BR fo_init (3)
 looks for original functions and stores their pointers in internal structure, so
-if you have overriden
+if you have overridden
 .BR write ()
 and you would call
 .BR write ()
@@ -33,6 +33,7 @@ and then call
 .BR fo_init (3)
 your point of failure will reset and function will not return error.
 .SH RETURN VALUE
+.PP
 Function does not return anything, but calls
 .BR exit ()
 when it fails to get pointer to original function with

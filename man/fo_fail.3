@@ -5,7 +5,7 @@
 - configures new point of failure to occur.
 .SH SYNOPSIS
 .PP
-.BI "#include \(dqfo.h\(dq"
+.BI #include\ "fo.h"
 .PP
 .BI "#define " FO_NULL " ((intptr_t)NULL)
 .br
@@ -50,8 +50,8 @@ as first argument.
 .I countdown
 describes when
 .I function
-should fails.
-Each call to overriden function decrements
+should fail.
+Each call to overridden function decrements
 .I countdown
 value, and if that value hits 0, then configured error is returned, otherwise
 original function is called.
@@ -62,10 +62,11 @@ will call original function.
 If you set
 .I countdown
 to 0, then
-.B function
+.I function
 will never fail.
 When
-.I countdown reaches 0 and
+.I countdown
+reaches 0 and
 .I function
 fails, then next calls will no longer fail until next
 .BR fo_fail (3)
@@ -103,11 +104,10 @@ fails
 variable will be set to
 .I errn
 value.
-.SH RETURN VALUES
+.SH RETURN VALUE
 .PP
 Function will return 0 on success. -1 with errno will be returned upon error.
 .SH ERRORS
-.PP
 .TP
 .B EINVAL
 .I countdown
