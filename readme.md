@@ -20,10 +20,10 @@ consists only of 2 (yes, *two*) functions, and one of them is init function.
 Library does not required you to make **any** changed to production code, all
 magic is done in test suite.
 
-* [fo_init](https://libfo.kurwinet.pl/manuals/fo_init.1.html)(3) - initializes
+* [fo_init](https://libfo.kurwinet.pl/manuals/fo_init.3.html)(3) - initializes
   everything, need to be called as early as possible, best to call it right
   after **main**().
-* [fo_fail](https://libfo.kurwinet.pl/manuals/fo_fail.1.html)(3) - configures
+* [fo_fail](https://libfo.kurwinet.pl/manuals/fo_fail.3.html)(3) - configures
   how, when and what function should fail.
 
 Small example:
