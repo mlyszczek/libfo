@@ -164,5 +164,8 @@ Contact
 
 Michał Łyszczek <michal.lyszczek@bofc.pl>
 
+See also
+========
+
 * [mtest](http://mtest.kurwinet.pl) unit test framework **libfo** uses
 * [git repository](http://git.kurwinet.pl/libfo) to browse code online
