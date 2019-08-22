@@ -20,10 +20,10 @@ consists only of 2 (yes, *two*) functions, and one of them is init function.
 Library does not required you to make **any** changed to production code, all
 magic is done in test suite.
 
-* [fo_init](https://libfo.kurwinet.pl/manuals/fo_init.1.html)(3) - initializes
+* [fo_init](https://libfo.bofc.pl/manuals/fo_init.3.html)(3) - initializes
   everything, need to be called as early as possible, best to call it right
   after **main**().
-* [fo_fail](https://libfo.kurwinet.pl/manuals/fo_fail.1.html)(3) - configures
+* [fo_fail](https://libfo.bofc.pl/manuals/fo_fail.3.html)(3) - configures
   how, when and what function should fail.
 
 Small example:
@@ -128,7 +128,7 @@ Usage
 
 Convinced? I'm glad. I don't like repeating myself, so to know more about
 library itself and how to use it, please check
-[libfo](https://libfo.kurwinet.pl/manuals/libfo.7.html)(7) manual page.
+[libfo](https://libfo.bofc.pl/manuals/libfo.7.html)(7) manual page.
 
 Installing
 ==========
@@ -145,7 +145,7 @@ Downloads
 =========
 
 Released prebuild libraries and source tarballs can be downloaded from
-[https://libfo.kurwinet.pl/downloads.html](https://libfo.kurwinet.pl/downloads.html)
+[https://libfo.bofc.pl/downloads.html](https://libfo.bofc.pl/downloads.html)
 
 Dependencies
 ============
@@ -164,5 +164,8 @@ Contact
 
 Michał Łyszczek <michal.lyszczek@bofc.pl>
 
-* [mtest](http://mtest.kurwinet.pl) unit test framework **libfo** uses
-* [git repository](http://git.kurwinet.pl/libso) to browse code online
+See also
+========
+
+* [mtest](http://mtest.bofc.pl) unit test framework **libfo** uses
+* [git repository](http://git.bofc.pl/libfo) to browse code online
