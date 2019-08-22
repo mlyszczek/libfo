@@ -1,4 +1,4 @@
-in_title="libfo.kurwinet.pl - super easy to use mocker for POSIX and libc (and any other library)"
+in_title="libfo.bofc.pl - super easy to use mocker for POSIX and libc (and any other library)"
 in_description="libfo generates generates ready to use C file that can be used to mock POSIX and libc functions with ease."
 in_keywords="c, posix, function, libc, mock, overridde"
 in_author="Michał Łyszczek"
