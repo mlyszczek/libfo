@@ -32,6 +32,67 @@ set back to initial state, so if you have installed some point of failure with
 and then call
 .BR fo_init (3)
 your point of failure will reset and function will not return error.
+.SH AUTOMATIC CALL
+.PP
+When running unit tests, you can easily call
+.BR fo_init (3)
+and
+.BR fo_fail (3)
+functions but it is difficult if not impossible to do it when running
+functional tests.
+These are usually run by bash or python interpreters and test already
+compiled binary where there are no
+.B libfo
+calls to trigger failure.
+For that purpose you can compile
+.B libfo
+with
+.B -init
+linker option to call
+.BR fo_init (3)
+right after library is loaded (you can think of it as main() for libs).
+Check
+.BR libfo (7)
+to learn how to build library with
+.B -init
+flag.
+.BR fo_init (3)
+can also load configuration of failing points from file when
+.B LIBFO_INIT_FILE
+environment variable is set.
+.PP
+Init is simple csv file in format, where leading spaces are ignored.
+.PP
+.nf
+    function-name, countdown, ret, errno
+.fi
+.PP
+One function per line.
+.B errno
+is
+.B string
+not
+.B int
+so you should use
+.I EINVAL
+and not
+.IR 22 .
+Single line is basically same as calling
+.BR fo_fail (3)
+and so same rules apply here.
+So csv file:
+.PP
+.nf
+    fread, 1, 0,    EINVAL
+    fopen, 2, NULL, EACCES
+.fi
+.PP
+is same as calling
+.PP
+.nf
+    fo_fail(fo_fread, 1, 0, EINVAL);
+    fo_fail(fo_fopen, 2, FO_NULL, EACCES);
+.fi
 .SH RETURN VALUE
 .PP
 Function does not return anything, but calls

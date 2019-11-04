@@ -6,6 +6,62 @@ Synopsis
 **libfo** is a tiny library that allows user to simulate errors of **POSIX** and
 **libc** functions.
 
+Quick example
+=============
+
+for unit tests
+--------------
+
+main.c
+~~~{.c}
+#include <stdio.h>
+#include <string.h>
+#include "fo.h"
+void production_code(void) {
+    char a[2], b[2];
+    printf(strcpy(a, b) == NULL ? "error\n" : "success\n");
+}
+
+int main(void) {
+    fo_fail(fo_strcpy, 1, FO_NULL, 0);
+    production_code();
+    return 0;
+}
+~~~
+
+~~~
+$ gcc main.c -L . -lfo -o test
+$ LD_PRELOAD=./libfo.so ./test
+error
+~~~
+
+for functional tests
+--------------------
+
+main.c
+~~~{.c}
+#include <stdio.h>
+#include <string.h>
+int main(void) {
+    char a[2], b[2];
+    printf(strcpy(a, b) == NULL ? "error\n" : "success\n");
+    return 0;
+}
+~~~
+
+fo-init
+~~~
+strcpy, 1, NULL, 0
+~~~
+
+~~~
+$ main.c -o test
+$ ./test
+success
+$ LD_PRELOAD=./libfo.so LIBFO_INIT_FILE=fo-init ./test
+error
+~~~
+
 Description
 ===========
 

@@ -2,16 +2,16 @@ fo.c:
 	../fogen -d ../functions.db -o fo
 
 fo.o: fo.c
-	gcc -fPIC -c fo.c -o fo.o
+	gcc -fPIC -c $^ -o $@
 
 libfo.so: fo.o
-	gcc -shared -fPIC -Wl,-soname,$@.1 -Wl,-init,fo_init -o $@ fo.o -lc
+	gcc -shared -fPIC -Wl,-soname,$@.1 -Wl,-init,fo_init -o $@ fo.o -lc -ldl
 
 fo-test: fo-test.c
-	gcc -o $@ $^ -L. -lfo -ldl
+	gcc -o $@ $^ -L. -lfo
 
 memcmp: memcmp.c
-	gcc -o $@ $^ -L. -lfo -ldl -fno-inline-functions -fno-builtin
+	gcc -o $@ $^ -L. -lfo -fno-inline-functions -fno-builtin
 
 check: libfo.so fo-test memcmp
 	LD_PRELOAD=./libfo.so ./fo-test

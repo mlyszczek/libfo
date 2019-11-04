@@ -446,8 +446,15 @@ cat >> "${outc}" << EOF
         }
 
         fo_info[fopos].countdown = atoi(countdown);
-        fo_info[fopos].ret = (intptr_t)atoll(ret);
         fo_info[fopos].errn = errno_str_to_int(errn);
+        if (strcmp(ret, "NULL") == 0)
+        {
+            fo_info[fopos].ret = FO_NULL;
+        }
+        else
+        {
+            fo_info[fopos].ret = (intptr_t)atoll(ret);
+        }
     }
 }
 

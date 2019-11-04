@@ -58,6 +58,31 @@ shared object from
 .BR fo.c .
 This step is important, library needs to be built separately and as shared
 object for everything to work.
+.B libfo.so
+could be compiled with:
+.PP
+.nf
+    $ gcc -fPIC -c fo.c -o fo.o
+    $ gcc -shared -fPIC -Wl,-soname,libfo.so.1 -o libfo.so fo.o -lc
+.fi
+.PP
+Or if you want to run functional tests run from shell or python, and have
+no way of adding
+.BR fo_fail (3)
+calls you might want to compile library with linked `-init' option:
+.PP
+.nf
+    $ gcc -fPIC -c fo.c -o fo.o
+    $ gcc -shared -fPIC -Wl,-soname,libfo.so.1 \\
+        -Wl,-init,fo_init -o libfo.so fo.o -lc
+.fi
+.PP
+and
+.B LIBFO_INIT_FILE
+envvar set to initialize and set failing points from file.
+Refer to
+.BR fo_init (3)
+for more information how to do it.
 .PP
 Install some point of failures with
 .BR fo_fail (3)
@@ -65,7 +90,13 @@ and write some test code with it.
 .PP
 When you run your test program, remember to run it with
 .B LD_PRELOAD=libfo.so
-(path may vary) so all functions are overridden by
+(path may vary) like
+.PP
+.nf
+    $ LD_PRELOAD=./libfo.so test-program
+.fi
+.PP
+so all functions are overridden by
 .BR libfo .
 .PP
 You might want to take a look at "tst" directory in
