@@ -167,7 +167,8 @@ cat > "${outc}" << EOF
 EOF
 
 include_list="$(mktemp)"
-echo "errno.h" > "${include_list}"
+echo "ctype.h" > "${include_list}"
+echo "errno.h" >> "${include_list}"
 echo "stdio.h" >> "${include_list}"
 echo "dlfcn.h" >> "${include_list}"
 echo "stdint.h" >> "${include_list}"
@@ -205,6 +206,18 @@ cat >> "${outc}" << EOF
 
    ========================================================================== */
 
+const char  *fostr[] =
+{
+EOF
+
+while read -r function
+do
+    echo "    \"${function}\"," >> "${outc}"
+done < "${flist}"
+
+cat >> "${outc}" << EOF
+};
+
 
 /* struct holding information about single function override
  */
@@ -239,6 +252,51 @@ struct fo_info
 
 static struct fo_info fo_info[fo_f_max];
 
+/* ==========================================================================
+                ____                     __   _
+               / __/__  __ ____   _____ / /_ (_)____   ____   _____
+              / /_ / / / // __ \ / ___// __// // __ \ / __ \ / ___/
+             / __// /_/ // / / // /__ / /_ / // /_/ // / / /(__  )
+            /_/   \__,_//_/ /_/ \___/ \__//_/ \____//_/ /_//____/
+
+   ========================================================================== */
+
+
+/* ==========================================================================
+    Function searches for errno int value from string. This is to allow
+    writing string errno value in init file.
+   ========================================================================== */
+
+
+static int errno_str_to_int
+(
+    const char  *s
+)
+{
+    if (strcmp("does not", "match") == 0) return -2;
+EOF
+
+errntmp=$(mktemp)
+cat /usr/include/asm-generic/errno-base.h /usr/include/asm-generic/errno.h > \
+    ${errntmp}
+
+while read -r e
+do
+    errn=$(echo "${e}" | grep -P "^#define.(?!_)" | awk '{print $2}')
+    if [ -z "${errn}" ]
+    then
+        continue
+    fi
+
+    #errn=$(echo "${e}" | grep -E "^#define ")
+    echo "    else if (strcmp(s, \"${errn}\") == 0) return ${errn};" >> "${outc}"
+done < ${errntmp}
+rm ${errntmp}
+
+cat >> "${outc}" << EOF
+    return 0;
+}
+
 
 /* ==========================================================================
                        __     __ _          ____
@@ -271,6 +329,12 @@ void fo_init
     void
 )
 {
+    const char  *init_file;  /* optional file used to load failing points */
+    char         line[256];  /* single line from init_file */
+    FILE        *f;          /* init_file stdio handle */
+    /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+
     #define FO_INIT(F) \\
         fo_info[fo_ ## F].countdown = -1; \\
         fo_info[fo_ ## F].ret = 0; \\
@@ -290,6 +354,101 @@ do
 done < "${flist}"
 
 cat >> "${outc}" << EOF
+
+   /* it is possible to use libfo on binary programs that you cannot
+    * (or don't want to) modify sources and be able to run some testing
+    * from python or bash. In that case you rather cannot call fo_init(3)
+    * or any other functions to prepare failing points.
+    */
+
+    if ((init_file = getenv("LIBFO_INIT_FILE")) == NULL)
+    {
+        return;
+    }
+
+    if ((f = fopen(init_file, "r")) == NULL)
+    {
+        fprintf(stderr, "error opening init_file %s: %s\n",
+                init_file, strerror(errno));
+        exit(1);
+    }
+
+    for (;;)
+    {
+        char  ret[32];
+        char  errn[32];
+        char  function[256];
+        char  countdown[32];
+        char *l;
+        int   pos;
+        int   fopos;
+        /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+
+        l = line;
+        memset(ret, 0x00, sizeof(ret));
+        memset(function, 0x00, sizeof(function));
+        memset(countdown, 0x00, sizeof(countdown));
+        line[sizeof(line) - 1] = 0x7f;
+
+        if (fgets(line, sizeof(line), f) == NULL)
+        {
+            int ret = feof(f);
+            fclose(f);
+
+            if (ret)
+            {
+                return;
+            }
+            fprintf(stderr, "fgets on init: %s failed: %s\n",
+                    init_file, strerror(errno));
+            exit(1);
+        }
+
+        if (line[sizeof(line) - 1] == '\0' && line[sizeof(line) - 2] != '\n')
+        {
+            fprintf(stderr, "line too long, HOW LONG IS YOUR FUNCTION?!\n");
+            exit(1);
+        }
+
+        while (isspace(*l)) ++l;
+
+        pos = 0;
+        while (*l != ',' && *l != '\0')
+            function[pos++] = *l++;
+
+        ++l;
+        pos = 0;
+        while (isspace(*l)) ++l;
+        while (*l != ',' && *l != '\0')
+            countdown[pos++] = *l++;
+
+        ++l;
+        pos = 0;
+        while (isspace(*l)) ++l;
+        while (*l != ',' && *l != '\0')
+            ret[pos++] = *l++;
+
+        ++l;
+        pos = 0;
+        while (isspace(*l)) ++l;
+        while (*l != ',' && *l != '\0' && *l != '\n')
+            errn[pos++] = *l++;
+
+        for (pos = 0; pos != sizeof(fostr)/sizeof(*fostr); ++pos)
+        {
+            if (strcmp(fostr[pos], function))
+            {
+                continue;
+            }
+
+            fopos = pos;
+        }
+
+        fo_info[fopos].countdown = atoi(countdown);
+        fo_info[fopos].ret = (intptr_t)atoll(ret);
+        fo_info[fopos].errn = errno_str_to_int(errn);
+    }
 }
 
 
