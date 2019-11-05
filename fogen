@@ -9,7 +9,7 @@
 # for most manually installed packages.
 prefix = "/usr/local"
 
-version="9999"
+version="0.2.0"
 
 ## ==========================================================================
 #                   _                                 __
