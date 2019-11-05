@@ -1,5 +1,5 @@
 fo.c:
-	../fogen
+	../fogen -r..
 
 fo.o: fo.c
 	gcc -fPIC -c $^ -o $@
