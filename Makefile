@@ -1,11 +1,12 @@
 VERSION=$(shell cat fogen | grep version=\" | cut -f2 -d\")
 DIST_DIR=libfo-$(VERSION)
 DESTDIR?=/usr/local
+RM ?= rm -f
 
 all: libfo.so
 
 fo.c:
-	./fogen -d functions.db -o fo
+	./fogen
 
 fo.o: fo.c
 	gcc -fPIC -c fo.c -o fo.o
@@ -17,7 +18,7 @@ check:
 	make check -C tst
 
 dist:
-	rm -rf $(DIST_DIR)
+	$(RM) -r $(DIST_DIR)
 	mkdir $(DIST_DIR)
 	cp Makefile fogen functions.db readme.md gen-download-page.sh $(DIST_DIR)
 	cp man2html.sh $(DIST_DIR)
@@ -31,7 +32,7 @@ dist:
 	tar czf $(DIST_DIR).tar.gz $(DIST_DIR)
 
 distclean: clean
-	rm -rf libfo-*
+	$(RM) -r libfo-*
 
 www:
 	./gen-download-page.sh
@@ -39,10 +40,10 @@ www:
 	make www -C www
 
 clean:
-	rm -f fo.c
-	rm -f fo.h
-	rm -f fo.o
-	rm -f libfo.so
+	$(RM) fo.c
+	$(RM) fo.h
+	$(RM) fo.o
+	$(RM) libfo.so
 	make clean -C tst
 	make clean -C www
 
