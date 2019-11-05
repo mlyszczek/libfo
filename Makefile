@@ -17,19 +17,30 @@ libfo.so: fo.o
 check:
 	make check -C tst
 
-dist:
+distpack:
 	$(RM) -r $(DIST_DIR)
 	mkdir $(DIST_DIR)
-	cp Makefile fogen functions.db readme.md gen-download-page.sh $(DIST_DIR)
-	cp man2html.sh $(DIST_DIR)
+	cp Makefile fogen db.conf readme.md gen-download-page.sh $(DIST_DIR)
+	cp LICENSE man2html.sh fo.c.in fo.h.in $(DIST_DIR)
 	mkdir $(DIST_DIR)/man
 	cp man/*.1 man/*.3 man/*.7 $(DIST_DIR)/man
 	mkdir $(DIST_DIR)/tst
 	cp tst/Makefile tst/fo-test.c tst/mtest.h $(DIST_DIR)/tst
+	cp tst/memcmp.c tst/mtest.sh tst/fo-test.sh $(DIST_DIR)/tst
 	mkdir $(DIST_DIR)/www
 	cp www/Makefile www/custom.css www/footer.in www/header.in $(DIST_DIR)/www
 	cp www/index.in www/index.md www/post-process.sh $(DIST_DIR)/www
+
+dist-gzip dist: distpack
 	tar czf $(DIST_DIR).tar.gz $(DIST_DIR)
+
+dist-bzip2: distpack
+	tar cjf $(DIST_DIR).tar.bz2 $(DIST_DIR)
+
+dist-xz: distpack
+	tar cJf $(DIST_DIR).tar.xz $(DIST_DIR)
+
+dist-all: dist-gzip dist-bzip2 dist-xz
 
 distclean: clean
 	$(RM) -r libfo-*
