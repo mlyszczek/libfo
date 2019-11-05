@@ -1,4 +1,6 @@
 VERSION=$(shell cat fogen | grep version=\" | cut -f2 -d\")
+BASE_VERSION=$(shell cat fogen | grep version=\" | cut -f2 -d\" | cut -f1 -d-)
+GITSHA=$(shell git rev-parse --short HEAD)
 DIST_DIR=libfo-$(VERSION)
 DESTDIR?=/usr/local
 RM ?= rm -f
@@ -59,6 +61,9 @@ clean:
 	make clean -C www
 
 install:
+	if [ "$(BASE_VERSION)" = "9999" ]; then \
+		sed -i 's/^version="9999\(-[[:alnum:]]\+\)\?"$$/version="9999-$(GITSHA)"/' fogen; \
+	fi
 	install -m0755 -D fogen         $(DESTDIR)/bin/fogen
 	install -m0755 -D fo.c.in       $(DESTDIR)/share/fogen/fo.c.in
 	install -m0755 -D fo.h.in       $(DESTDIR)/share/fogen/fo.h.in
