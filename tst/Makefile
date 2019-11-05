@@ -1,5 +1,5 @@
 fo.c:
-	../fogen -d ../functions.db -o fo
+	../fogen
 
 fo.o: fo.c
 	gcc -fPIC -c $^ -o $@

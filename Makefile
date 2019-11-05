@@ -48,6 +48,9 @@ clean:
 
 install:
 	install -m0755 -D fogen         $(DESTDIR)/bin/fogen
+	install -m0755 -D fo.c.in       $(DESTDIR)/share/fogen/fo.c.in
+	install -m0755 -D fo.h.in       $(DESTDIR)/share/fogen/fo.h.in
+	install -m0755 -D db.conf       $(DESTDIR)/share/fogen/db.conf
 	install -m0644 -D man/fogen.1   $(DESTDIR)/share/man/man1/fogen.1
 	install -m0644 -D man/fo_init.3 $(DESTDIR)/share/man/man3/fo_init.3
 	install -m0644 -D man/fo_fail.3 $(DESTDIR)/share/man/man3/fo_fail.3
