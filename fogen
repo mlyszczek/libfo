@@ -9,6 +9,8 @@
 # for most manually installed packages.
 prefix = "/usr/local"
 
+version="9999"
+
 ## ==========================================================================
 #                   _                                 __
 #                  (_)____ ___   ____   ____   _____ / /_ _____
@@ -72,8 +74,9 @@ def eprint(
 
 
 # read arguments to get data about config to generate
-
+vstr = "fogen v" + version
 parser = argparse.ArgumentParser(description="Generate fo.{c,h} files")
+parser.add_argument("-v", "--version", action='version', version=vstr)
 parser.add_argument("-d", "--db", required=0, metavar="file",
 		help="Path to a csv database file with functions information " + \
 				"that can be used to generage fo.c file. If not passed " + \
