@@ -56,4 +56,14 @@ install:
 	install -m0644 -D man/fo_fail.3 $(DESTDIR)/share/man/man3/fo_fail.3
 	install -m0644 -D man/libfo.7   $(DESTDIR)/share/man/man7/libfo.7
 
-.PHONY: www all check dist distclean clean install
+uninstall:
+	$(RM) $(DESTDIR)/bin/fogen
+	$(RM) $(DESTDIR)/share/fogen/fo.c.in
+	$(RM) $(DESTDIR)/share/fogen/fo.h.in
+	$(RM) $(DESTDIR)/share/fogen/db.conf
+	$(RM) $(DESTDIR)/share/man/man1/fogen.1
+	$(RM) $(DESTDIR)/share/man/man3/fo_init.3
+	$(RM) $(DESTDIR)/share/man/man3/fo_fail.3
+	$(RM) $(DESTDIR)/share/man/man7/libfo.7
+
+.PHONY: www all check dist distclean clean install uninstall
