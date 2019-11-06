@@ -264,8 +264,8 @@ void fo_init
 	void *      (*real_memset)(void *, int, size_t);
 	/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-	#define die(S, ...) do { fprintf(stderr, S, __VA_ARGS__); exit(1); } while (0)
-	#define diep(S) do { perror(S); exit(1); } while (0)
+	#define die(S, ...) do { fprintf(stderr, "f/fogen: "S, __VA_ARGS__); exit(1); } while (0)
+	#define diep(S) do { perror("f/fogen: "S); exit(1); } while (0)
 
 	#define FO_INIT(F) \
 		fo_info[fo_ ## F].countdown = -1; \
@@ -274,10 +274,7 @@ void fo_init
 		fo_info[fo_ ## F].original = dlsym(RTLD_NEXT, #F); \
 		fo_info[fo_ ## F].str = #F; \
 		if (fo_info[fo_ ## F].original == NULL) \
-		{ \
-			fprintf(stderr, "f/dlsym(RTLD_NEXT, %s): %s\n", #F, dlerror()); \
-			exit(1); \
-		}
+			die("dlsym(RTLD_NEXT, %s): %s\n", #F, dlerror())
 
 ${fo_init_list}
 
