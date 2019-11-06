@@ -34,6 +34,9 @@ distpack:
 	mkdir $(DIST_DIR)/www
 	cp www/Makefile www/custom.css www/footer.in www/header.in $(DIST_DIR)/www
 	cp www/index.in www/index.md www/post-process.sh $(DIST_DIR)/www
+	mkdir $(DIST_DIR)/custom
+	cp custom/* $(DIST_DIR)/custom
+
 
 dist-gzip dist: distpack
 	tar czf $(DIST_DIR).tar.gz $(DIST_DIR)
@@ -54,7 +57,7 @@ distcheck: dist
 	tar xzf $(DIST_DIR).tar.gz
 	$(MAKE) -C $(DIST_DIR) check
 	$(MKDIR) $(DIST_DIR)/install
-	DESTDIR=$(DIST_DIR)/install $(MAKE) -C $(DIST_DIR) install
+	DESTDIR=install $(MAKE) -C $(DIST_DIR) install
 	$(MAKE) -C $(DIST_DIR) distclean
 
 www:
@@ -78,9 +81,9 @@ install:
 		install -m0644 -D $$f $(DESTDIR)/share/fogen/$$f; \
 	done
 	install -m0755 -D fogen         $(DESTDIR)/bin/fogen
-	install -m0755 -D fo.c.in       $(DESTDIR)/share/fogen/fo.c.in
-	install -m0755 -D fo.h.in       $(DESTDIR)/share/fogen/fo.h.in
-	install -m0755 -D db.conf       $(DESTDIR)/share/fogen/db.conf
+	install -m0644 -D fo.c.in       $(DESTDIR)/share/fogen/fo.c.in
+	install -m0466 -D fo.h.in       $(DESTDIR)/share/fogen/fo.h.in
+	install -m0644 -D db.conf       $(DESTDIR)/share/fogen/db.conf
 	install -m0644 -D man/fogen.1   $(DESTDIR)/share/man/man1/fogen.1
 	install -m0644 -D man/fo_init.3 $(DESTDIR)/share/man/man3/fo_init.3
 	install -m0644 -D man/fo_fail.3 $(DESTDIR)/share/man/man3/fo_fail.3
