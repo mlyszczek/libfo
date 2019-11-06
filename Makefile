@@ -4,6 +4,7 @@ GITSHA=$(shell git rev-parse --short HEAD)
 DIST_DIR=libfo-$(VERSION)
 DESTDIR?=/usr/local
 RM ?= rm -f
+RMDIR ?= rmdir --ignore-fail-on-non-empty
 
 all: libfo.so
 
@@ -64,6 +65,9 @@ install:
 	if [ "$(BASE_VERSION)" = "9999" ]; then \
 		sed -i 's/^version="9999\(-[[:alnum:]]\+\)\?"$$/version="9999-$(GITSHA)"/' fogen; \
 	fi
+	for f in custom/*; do \
+		install -m0644 -D $$f $(DESTDIR)/share/fogen/$$f; \
+	done
 	install -m0755 -D fogen         $(DESTDIR)/bin/fogen
 	install -m0755 -D fo.c.in       $(DESTDIR)/share/fogen/fo.c.in
 	install -m0755 -D fo.h.in       $(DESTDIR)/share/fogen/fo.h.in
@@ -74,6 +78,9 @@ install:
 	install -m0644 -D man/libfo.7   $(DESTDIR)/share/man/man7/libfo.7
 
 uninstall:
+	for f in custom/*; do \
+		$(RM) $(DESTDIR)/share/fogen/$$f; \
+	done
 	$(RM) $(DESTDIR)/bin/fogen
 	$(RM) $(DESTDIR)/share/fogen/fo.c.in
 	$(RM) $(DESTDIR)/share/fogen/fo.h.in
@@ -82,5 +89,7 @@ uninstall:
 	$(RM) $(DESTDIR)/share/man/man3/fo_init.3
 	$(RM) $(DESTDIR)/share/man/man3/fo_fail.3
 	$(RM) $(DESTDIR)/share/man/man7/libfo.7
+	$(RMDIR) $(DESTDIR)/share/fogen/custom
+	$(RMDIR) $(DESTDIR)/share/fogen/
 
 .PHONY: www all check dist distclean clean install uninstall

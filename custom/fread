@@ -1,0 +1,4 @@
+{
+	if (fo_info[fo_fread].errn != 0)
+		arg3->_flags |= _IO_ERR_SEEN;
+}

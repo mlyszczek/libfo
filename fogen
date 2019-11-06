@@ -388,6 +388,16 @@ for f in db:
 	o += "\t\toriginal = fo_info[fo_{}].original;\n".format(f['fname'])
 	o += "\t\treturn original({});\n".format(args_call)
 	o += "\t}\n"
+
+	try:
+		with open(resdir + "/custom/" + f['fname']) as c:
+			o += "\n"
+			for l in c.read().splitlines():
+				o += "\t{}\n".format(l)
+			o += "\n"
+	except:
+		pass
+
 	o += "\terrno = fo_info[fo_{}].errn;\n".format(f['fname'])
 	o += "\treturn ({})fo_info[fo_{}].ret;\n".format(f['rtype'], f['fname'])
 	o += "}\n\n\n"
