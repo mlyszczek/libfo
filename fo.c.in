@@ -78,142 +78,143 @@ static struct fo_info fo_info[fo_f_max];
 
 static int errno_str_to_int
 (
-	const char  *s
+	const char  *s,
+	int        (*real_strcmp)(const char *, const char *)
 )
 {
-	     if (strcmp(s, "EPERM") == 0) return EPERM;
-	else if (strcmp(s, "ENOENT") == 0) return ENOENT;
-	else if (strcmp(s, "ESRCH") == 0) return ESRCH;
-	else if (strcmp(s, "EINTR") == 0) return EINTR;
-	else if (strcmp(s, "EIO") == 0) return EIO;
-	else if (strcmp(s, "ENXIO") == 0) return ENXIO;
-	else if (strcmp(s, "E2BIG") == 0) return E2BIG;
-	else if (strcmp(s, "ENOEXEC") == 0) return ENOEXEC;
-	else if (strcmp(s, "EBADF") == 0) return EBADF;
-	else if (strcmp(s, "ECHILD") == 0) return ECHILD;
-	else if (strcmp(s, "EAGAIN") == 0) return EAGAIN;
-	else if (strcmp(s, "ENOMEM") == 0) return ENOMEM;
-	else if (strcmp(s, "EACCES") == 0) return EACCES;
-	else if (strcmp(s, "EFAULT") == 0) return EFAULT;
-	else if (strcmp(s, "ENOTBLK") == 0) return ENOTBLK;
-	else if (strcmp(s, "EBUSY") == 0) return EBUSY;
-	else if (strcmp(s, "EEXIST") == 0) return EEXIST;
-	else if (strcmp(s, "EXDEV") == 0) return EXDEV;
-	else if (strcmp(s, "ENODEV") == 0) return ENODEV;
-	else if (strcmp(s, "ENOTDIR") == 0) return ENOTDIR;
-	else if (strcmp(s, "EISDIR") == 0) return EISDIR;
-	else if (strcmp(s, "EINVAL") == 0) return EINVAL;
-	else if (strcmp(s, "ENFILE") == 0) return ENFILE;
-	else if (strcmp(s, "EMFILE") == 0) return EMFILE;
-	else if (strcmp(s, "ENOTTY") == 0) return ENOTTY;
-	else if (strcmp(s, "ETXTBSY") == 0) return ETXTBSY;
-	else if (strcmp(s, "EFBIG") == 0) return EFBIG;
-	else if (strcmp(s, "ENOSPC") == 0) return ENOSPC;
-	else if (strcmp(s, "ESPIPE") == 0) return ESPIPE;
-	else if (strcmp(s, "EROFS") == 0) return EROFS;
-	else if (strcmp(s, "EMLINK") == 0) return EMLINK;
-	else if (strcmp(s, "EPIPE") == 0) return EPIPE;
-	else if (strcmp(s, "EDOM") == 0) return EDOM;
-	else if (strcmp(s, "ERANGE") == 0) return ERANGE;
-	else if (strcmp(s, "EDEADLK") == 0) return EDEADLK;
-	else if (strcmp(s, "ENAMETOOLONG") == 0) return ENAMETOOLONG;
-	else if (strcmp(s, "ENOLCK") == 0) return ENOLCK;
-	else if (strcmp(s, "ENOSYS") == 0) return ENOSYS;
-	else if (strcmp(s, "ENOTEMPTY") == 0) return ENOTEMPTY;
-	else if (strcmp(s, "ELOOP") == 0) return ELOOP;
-	else if (strcmp(s, "EWOULDBLOCK") == 0) return EWOULDBLOCK;
-	else if (strcmp(s, "ENOMSG") == 0) return ENOMSG;
-	else if (strcmp(s, "EIDRM") == 0) return EIDRM;
-	else if (strcmp(s, "ECHRNG") == 0) return ECHRNG;
-	else if (strcmp(s, "EL2NSYNC") == 0) return EL2NSYNC;
-	else if (strcmp(s, "EL3HLT") == 0) return EL3HLT;
-	else if (strcmp(s, "EL3RST") == 0) return EL3RST;
-	else if (strcmp(s, "ELNRNG") == 0) return ELNRNG;
-	else if (strcmp(s, "EUNATCH") == 0) return EUNATCH;
-	else if (strcmp(s, "ENOCSI") == 0) return ENOCSI;
-	else if (strcmp(s, "EL2HLT") == 0) return EL2HLT;
-	else if (strcmp(s, "EBADE") == 0) return EBADE;
-	else if (strcmp(s, "EBADR") == 0) return EBADR;
-	else if (strcmp(s, "EXFULL") == 0) return EXFULL;
-	else if (strcmp(s, "ENOANO") == 0) return ENOANO;
-	else if (strcmp(s, "EBADRQC") == 0) return EBADRQC;
-	else if (strcmp(s, "EBADSLT") == 0) return EBADSLT;
-	else if (strcmp(s, "EDEADLOCK") == 0) return EDEADLOCK;
-	else if (strcmp(s, "EBFONT") == 0) return EBFONT;
-	else if (strcmp(s, "ENOSTR") == 0) return ENOSTR;
-	else if (strcmp(s, "ENODATA") == 0) return ENODATA;
-	else if (strcmp(s, "ETIME") == 0) return ETIME;
-	else if (strcmp(s, "ENOSR") == 0) return ENOSR;
-	else if (strcmp(s, "ENONET") == 0) return ENONET;
-	else if (strcmp(s, "ENOPKG") == 0) return ENOPKG;
-	else if (strcmp(s, "EREMOTE") == 0) return EREMOTE;
-	else if (strcmp(s, "ENOLINK") == 0) return ENOLINK;
-	else if (strcmp(s, "EADV") == 0) return EADV;
-	else if (strcmp(s, "ESRMNT") == 0) return ESRMNT;
-	else if (strcmp(s, "ECOMM") == 0) return ECOMM;
-	else if (strcmp(s, "EPROTO") == 0) return EPROTO;
-	else if (strcmp(s, "EMULTIHOP") == 0) return EMULTIHOP;
-	else if (strcmp(s, "EDOTDOT") == 0) return EDOTDOT;
-	else if (strcmp(s, "EBADMSG") == 0) return EBADMSG;
-	else if (strcmp(s, "EOVERFLOW") == 0) return EOVERFLOW;
-	else if (strcmp(s, "ENOTUNIQ") == 0) return ENOTUNIQ;
-	else if (strcmp(s, "EBADFD") == 0) return EBADFD;
-	else if (strcmp(s, "EREMCHG") == 0) return EREMCHG;
-	else if (strcmp(s, "ELIBACC") == 0) return ELIBACC;
-	else if (strcmp(s, "ELIBBAD") == 0) return ELIBBAD;
-	else if (strcmp(s, "ELIBSCN") == 0) return ELIBSCN;
-	else if (strcmp(s, "ELIBMAX") == 0) return ELIBMAX;
-	else if (strcmp(s, "ELIBEXEC") == 0) return ELIBEXEC;
-	else if (strcmp(s, "EILSEQ") == 0) return EILSEQ;
-	else if (strcmp(s, "ERESTART") == 0) return ERESTART;
-	else if (strcmp(s, "ESTRPIPE") == 0) return ESTRPIPE;
-	else if (strcmp(s, "EUSERS") == 0) return EUSERS;
-	else if (strcmp(s, "ENOTSOCK") == 0) return ENOTSOCK;
-	else if (strcmp(s, "EDESTADDRREQ") == 0) return EDESTADDRREQ;
-	else if (strcmp(s, "EMSGSIZE") == 0) return EMSGSIZE;
-	else if (strcmp(s, "EPROTOTYPE") == 0) return EPROTOTYPE;
-	else if (strcmp(s, "ENOPROTOOPT") == 0) return ENOPROTOOPT;
-	else if (strcmp(s, "EPROTONOSUPPORT") == 0) return EPROTONOSUPPORT;
-	else if (strcmp(s, "ESOCKTNOSUPPORT") == 0) return ESOCKTNOSUPPORT;
-	else if (strcmp(s, "EOPNOTSUPP") == 0) return EOPNOTSUPP;
-	else if (strcmp(s, "EPFNOSUPPORT") == 0) return EPFNOSUPPORT;
-	else if (strcmp(s, "EAFNOSUPPORT") == 0) return EAFNOSUPPORT;
-	else if (strcmp(s, "EADDRINUSE") == 0) return EADDRINUSE;
-	else if (strcmp(s, "EADDRNOTAVAIL") == 0) return EADDRNOTAVAIL;
-	else if (strcmp(s, "ENETDOWN") == 0) return ENETDOWN;
-	else if (strcmp(s, "ENETUNREACH") == 0) return ENETUNREACH;
-	else if (strcmp(s, "ENETRESET") == 0) return ENETRESET;
-	else if (strcmp(s, "ECONNABORTED") == 0) return ECONNABORTED;
-	else if (strcmp(s, "ECONNRESET") == 0) return ECONNRESET;
-	else if (strcmp(s, "ENOBUFS") == 0) return ENOBUFS;
-	else if (strcmp(s, "EISCONN") == 0) return EISCONN;
-	else if (strcmp(s, "ENOTCONN") == 0) return ENOTCONN;
-	else if (strcmp(s, "ESHUTDOWN") == 0) return ESHUTDOWN;
-	else if (strcmp(s, "ETOOMANYREFS") == 0) return ETOOMANYREFS;
-	else if (strcmp(s, "ETIMEDOUT") == 0) return ETIMEDOUT;
-	else if (strcmp(s, "ECONNREFUSED") == 0) return ECONNREFUSED;
-	else if (strcmp(s, "EHOSTDOWN") == 0) return EHOSTDOWN;
-	else if (strcmp(s, "EHOSTUNREACH") == 0) return EHOSTUNREACH;
-	else if (strcmp(s, "EALREADY") == 0) return EALREADY;
-	else if (strcmp(s, "EINPROGRESS") == 0) return EINPROGRESS;
-	else if (strcmp(s, "ESTALE") == 0) return ESTALE;
-	else if (strcmp(s, "EUCLEAN") == 0) return EUCLEAN;
-	else if (strcmp(s, "ENOTNAM") == 0) return ENOTNAM;
-	else if (strcmp(s, "ENAVAIL") == 0) return ENAVAIL;
-	else if (strcmp(s, "EISNAM") == 0) return EISNAM;
-	else if (strcmp(s, "EREMOTEIO") == 0) return EREMOTEIO;
-	else if (strcmp(s, "EDQUOT") == 0) return EDQUOT;
-	else if (strcmp(s, "ENOMEDIUM") == 0) return ENOMEDIUM;
-	else if (strcmp(s, "EMEDIUMTYPE") == 0) return EMEDIUMTYPE;
-	else if (strcmp(s, "ECANCELED") == 0) return ECANCELED;
-	else if (strcmp(s, "ENOKEY") == 0) return ENOKEY;
-	else if (strcmp(s, "EKEYEXPIRED") == 0) return EKEYEXPIRED;
-	else if (strcmp(s, "EKEYREVOKED") == 0) return EKEYREVOKED;
-	else if (strcmp(s, "EKEYREJECTED") == 0) return EKEYREJECTED;
-	else if (strcmp(s, "EOWNERDEAD") == 0) return EOWNERDEAD;
-	else if (strcmp(s, "ENOTRECOVERABLE") == 0) return ENOTRECOVERABLE;
-	else if (strcmp(s, "ERFKILL") == 0) return ERFKILL;
-	else if (strcmp(s, "EHWPOISON") == 0) return EHWPOISON;
+	     if (real_strcmp(s, "EPERM") == 0) return EPERM;
+	else if (real_strcmp(s, "ENOENT") == 0) return ENOENT;
+	else if (real_strcmp(s, "ESRCH") == 0) return ESRCH;
+	else if (real_strcmp(s, "EINTR") == 0) return EINTR;
+	else if (real_strcmp(s, "EIO") == 0) return EIO;
+	else if (real_strcmp(s, "ENXIO") == 0) return ENXIO;
+	else if (real_strcmp(s, "E2BIG") == 0) return E2BIG;
+	else if (real_strcmp(s, "ENOEXEC") == 0) return ENOEXEC;
+	else if (real_strcmp(s, "EBADF") == 0) return EBADF;
+	else if (real_strcmp(s, "ECHILD") == 0) return ECHILD;
+	else if (real_strcmp(s, "EAGAIN") == 0) return EAGAIN;
+	else if (real_strcmp(s, "ENOMEM") == 0) return ENOMEM;
+	else if (real_strcmp(s, "EACCES") == 0) return EACCES;
+	else if (real_strcmp(s, "EFAULT") == 0) return EFAULT;
+	else if (real_strcmp(s, "ENOTBLK") == 0) return ENOTBLK;
+	else if (real_strcmp(s, "EBUSY") == 0) return EBUSY;
+	else if (real_strcmp(s, "EEXIST") == 0) return EEXIST;
+	else if (real_strcmp(s, "EXDEV") == 0) return EXDEV;
+	else if (real_strcmp(s, "ENODEV") == 0) return ENODEV;
+	else if (real_strcmp(s, "ENOTDIR") == 0) return ENOTDIR;
+	else if (real_strcmp(s, "EISDIR") == 0) return EISDIR;
+	else if (real_strcmp(s, "EINVAL") == 0) return EINVAL;
+	else if (real_strcmp(s, "ENFILE") == 0) return ENFILE;
+	else if (real_strcmp(s, "EMFILE") == 0) return EMFILE;
+	else if (real_strcmp(s, "ENOTTY") == 0) return ENOTTY;
+	else if (real_strcmp(s, "ETXTBSY") == 0) return ETXTBSY;
+	else if (real_strcmp(s, "EFBIG") == 0) return EFBIG;
+	else if (real_strcmp(s, "ENOSPC") == 0) return ENOSPC;
+	else if (real_strcmp(s, "ESPIPE") == 0) return ESPIPE;
+	else if (real_strcmp(s, "EROFS") == 0) return EROFS;
+	else if (real_strcmp(s, "EMLINK") == 0) return EMLINK;
+	else if (real_strcmp(s, "EPIPE") == 0) return EPIPE;
+	else if (real_strcmp(s, "EDOM") == 0) return EDOM;
+	else if (real_strcmp(s, "ERANGE") == 0) return ERANGE;
+	else if (real_strcmp(s, "EDEADLK") == 0) return EDEADLK;
+	else if (real_strcmp(s, "ENAMETOOLONG") == 0) return ENAMETOOLONG;
+	else if (real_strcmp(s, "ENOLCK") == 0) return ENOLCK;
+	else if (real_strcmp(s, "ENOSYS") == 0) return ENOSYS;
+	else if (real_strcmp(s, "ENOTEMPTY") == 0) return ENOTEMPTY;
+	else if (real_strcmp(s, "ELOOP") == 0) return ELOOP;
+	else if (real_strcmp(s, "EWOULDBLOCK") == 0) return EWOULDBLOCK;
+	else if (real_strcmp(s, "ENOMSG") == 0) return ENOMSG;
+	else if (real_strcmp(s, "EIDRM") == 0) return EIDRM;
+	else if (real_strcmp(s, "ECHRNG") == 0) return ECHRNG;
+	else if (real_strcmp(s, "EL2NSYNC") == 0) return EL2NSYNC;
+	else if (real_strcmp(s, "EL3HLT") == 0) return EL3HLT;
+	else if (real_strcmp(s, "EL3RST") == 0) return EL3RST;
+	else if (real_strcmp(s, "ELNRNG") == 0) return ELNRNG;
+	else if (real_strcmp(s, "EUNATCH") == 0) return EUNATCH;
+	else if (real_strcmp(s, "ENOCSI") == 0) return ENOCSI;
+	else if (real_strcmp(s, "EL2HLT") == 0) return EL2HLT;
+	else if (real_strcmp(s, "EBADE") == 0) return EBADE;
+	else if (real_strcmp(s, "EBADR") == 0) return EBADR;
+	else if (real_strcmp(s, "EXFULL") == 0) return EXFULL;
+	else if (real_strcmp(s, "ENOANO") == 0) return ENOANO;
+	else if (real_strcmp(s, "EBADRQC") == 0) return EBADRQC;
+	else if (real_strcmp(s, "EBADSLT") == 0) return EBADSLT;
+	else if (real_strcmp(s, "EDEADLOCK") == 0) return EDEADLOCK;
+	else if (real_strcmp(s, "EBFONT") == 0) return EBFONT;
+	else if (real_strcmp(s, "ENOSTR") == 0) return ENOSTR;
+	else if (real_strcmp(s, "ENODATA") == 0) return ENODATA;
+	else if (real_strcmp(s, "ETIME") == 0) return ETIME;
+	else if (real_strcmp(s, "ENOSR") == 0) return ENOSR;
+	else if (real_strcmp(s, "ENONET") == 0) return ENONET;
+	else if (real_strcmp(s, "ENOPKG") == 0) return ENOPKG;
+	else if (real_strcmp(s, "EREMOTE") == 0) return EREMOTE;
+	else if (real_strcmp(s, "ENOLINK") == 0) return ENOLINK;
+	else if (real_strcmp(s, "EADV") == 0) return EADV;
+	else if (real_strcmp(s, "ESRMNT") == 0) return ESRMNT;
+	else if (real_strcmp(s, "ECOMM") == 0) return ECOMM;
+	else if (real_strcmp(s, "EPROTO") == 0) return EPROTO;
+	else if (real_strcmp(s, "EMULTIHOP") == 0) return EMULTIHOP;
+	else if (real_strcmp(s, "EDOTDOT") == 0) return EDOTDOT;
+	else if (real_strcmp(s, "EBADMSG") == 0) return EBADMSG;
+	else if (real_strcmp(s, "EOVERFLOW") == 0) return EOVERFLOW;
+	else if (real_strcmp(s, "ENOTUNIQ") == 0) return ENOTUNIQ;
+	else if (real_strcmp(s, "EBADFD") == 0) return EBADFD;
+	else if (real_strcmp(s, "EREMCHG") == 0) return EREMCHG;
+	else if (real_strcmp(s, "ELIBACC") == 0) return ELIBACC;
+	else if (real_strcmp(s, "ELIBBAD") == 0) return ELIBBAD;
+	else if (real_strcmp(s, "ELIBSCN") == 0) return ELIBSCN;
+	else if (real_strcmp(s, "ELIBMAX") == 0) return ELIBMAX;
+	else if (real_strcmp(s, "ELIBEXEC") == 0) return ELIBEXEC;
+	else if (real_strcmp(s, "EILSEQ") == 0) return EILSEQ;
+	else if (real_strcmp(s, "ERESTART") == 0) return ERESTART;
+	else if (real_strcmp(s, "ESTRPIPE") == 0) return ESTRPIPE;
+	else if (real_strcmp(s, "EUSERS") == 0) return EUSERS;
+	else if (real_strcmp(s, "ENOTSOCK") == 0) return ENOTSOCK;
+	else if (real_strcmp(s, "EDESTADDRREQ") == 0) return EDESTADDRREQ;
+	else if (real_strcmp(s, "EMSGSIZE") == 0) return EMSGSIZE;
+	else if (real_strcmp(s, "EPROTOTYPE") == 0) return EPROTOTYPE;
+	else if (real_strcmp(s, "ENOPROTOOPT") == 0) return ENOPROTOOPT;
+	else if (real_strcmp(s, "EPROTONOSUPPORT") == 0) return EPROTONOSUPPORT;
+	else if (real_strcmp(s, "ESOCKTNOSUPPORT") == 0) return ESOCKTNOSUPPORT;
+	else if (real_strcmp(s, "EOPNOTSUPP") == 0) return EOPNOTSUPP;
+	else if (real_strcmp(s, "EPFNOSUPPORT") == 0) return EPFNOSUPPORT;
+	else if (real_strcmp(s, "EAFNOSUPPORT") == 0) return EAFNOSUPPORT;
+	else if (real_strcmp(s, "EADDRINUSE") == 0) return EADDRINUSE;
+	else if (real_strcmp(s, "EADDRNOTAVAIL") == 0) return EADDRNOTAVAIL;
+	else if (real_strcmp(s, "ENETDOWN") == 0) return ENETDOWN;
+	else if (real_strcmp(s, "ENETUNREACH") == 0) return ENETUNREACH;
+	else if (real_strcmp(s, "ENETRESET") == 0) return ENETRESET;
+	else if (real_strcmp(s, "ECONNABORTED") == 0) return ECONNABORTED;
+	else if (real_strcmp(s, "ECONNRESET") == 0) return ECONNRESET;
+	else if (real_strcmp(s, "ENOBUFS") == 0) return ENOBUFS;
+	else if (real_strcmp(s, "EISCONN") == 0) return EISCONN;
+	else if (real_strcmp(s, "ENOTCONN") == 0) return ENOTCONN;
+	else if (real_strcmp(s, "ESHUTDOWN") == 0) return ESHUTDOWN;
+	else if (real_strcmp(s, "ETOOMANYREFS") == 0) return ETOOMANYREFS;
+	else if (real_strcmp(s, "ETIMEDOUT") == 0) return ETIMEDOUT;
+	else if (real_strcmp(s, "ECONNREFUSED") == 0) return ECONNREFUSED;
+	else if (real_strcmp(s, "EHOSTDOWN") == 0) return EHOSTDOWN;
+	else if (real_strcmp(s, "EHOSTUNREACH") == 0) return EHOSTUNREACH;
+	else if (real_strcmp(s, "EALREADY") == 0) return EALREADY;
+	else if (real_strcmp(s, "EINPROGRESS") == 0) return EINPROGRESS;
+	else if (real_strcmp(s, "ESTALE") == 0) return ESTALE;
+	else if (real_strcmp(s, "EUCLEAN") == 0) return EUCLEAN;
+	else if (real_strcmp(s, "ENOTNAM") == 0) return ENOTNAM;
+	else if (real_strcmp(s, "ENAVAIL") == 0) return ENAVAIL;
+	else if (real_strcmp(s, "EISNAM") == 0) return EISNAM;
+	else if (real_strcmp(s, "EREMOTEIO") == 0) return EREMOTEIO;
+	else if (real_strcmp(s, "EDQUOT") == 0) return EDQUOT;
+	else if (real_strcmp(s, "ENOMEDIUM") == 0) return ENOMEDIUM;
+	else if (real_strcmp(s, "EMEDIUMTYPE") == 0) return EMEDIUMTYPE;
+	else if (real_strcmp(s, "ECANCELED") == 0) return ECANCELED;
+	else if (real_strcmp(s, "ENOKEY") == 0) return ENOKEY;
+	else if (real_strcmp(s, "EKEYEXPIRED") == 0) return EKEYEXPIRED;
+	else if (real_strcmp(s, "EKEYREVOKED") == 0) return EKEYREVOKED;
+	else if (real_strcmp(s, "EKEYREJECTED") == 0) return EKEYREJECTED;
+	else if (real_strcmp(s, "EOWNERDEAD") == 0) return EOWNERDEAD;
+	else if (real_strcmp(s, "ENOTRECOVERABLE") == 0) return ENOTRECOVERABLE;
+	else if (real_strcmp(s, "ERFKILL") == 0) return ERFKILL;
+	else if (real_strcmp(s, "EHWPOISON") == 0) return EHWPOISON;
 	return 0;
 }
 
@@ -252,6 +253,15 @@ void fo_init
 	const char  *init_file;  /* optional file used to load failing points */
 	char         line[256];  /* single line from init_file */
 	FILE        *f;          /* init_file stdio handle */
+
+	char *      (*real_fgets)(char *, int, FILE *);
+	char *      (*real_strerror)(int);
+	int         (*real_atoi)(const char *);
+	int         (*real_fclose)(FILE *);
+	int         (*real_feof)(FILE *);
+	int         (*real_strcmp)(const char *, const char *);
+	long        (*real_atol)(const char *);
+	void *      (*real_memset)(void *, int, size_t);
 	/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 	#define die(S, ...) do { fprintf(stderr, S, __VA_ARGS__); exit(1); } while (0)
@@ -274,6 +284,29 @@ ${fo_init_list}
 	if ((init_file = getenv("LIBFO_INIT_FILE")) == NULL)
 		return;
 
+	/* in case user overrides fgets() or any function we use, we
+	 * could end up in a situation where his failing point hits us
+	 * right in our face. To prevent crashing we store original
+	 * functions in out pointer.
+	 */
+	real_fgets = fgets;
+	real_strerror = strerror;
+	real_atoi = atoi;
+	real_fclose = fclose;
+	real_feof = feof;
+	real_strcmp = strcmp;
+	real_atol = atol;
+	real_memset = memset;
+
+%{if ${fo_fgets_used}}	real_fgets = fo_info[fo_fgets].original;%{fi}
+%{if ${fo_strerror_used}}	real_strerror = fo_info[fo_strerror].original;%{fi}
+%{if ${fo_atoi_used}}	real_atoi = fo_info[fo_atoi].original;%{fi}
+%{if ${fo_fclose_used}}	real_fclose = fo_info[fo_fclose].original;%{fi}
+%{if ${fo_feof_used}}	real_feof = fo_info[fo_feof].original;%{fi}
+%{if ${fo_strcmp_used}}	real_strcmp = fo_info[fo_strcmp].original;%{fi}
+%{if ${fo_atol_used}}	real_atol = fo_info[fo_atol].original;%{fi}
+%{if ${fo_memset_used}}	real_memset = fo_info[fo_memset].original;%{fi}
+
 	if ((f = fopen(init_file, "r")) == NULL)
 		die("error opening init-file %s: %s\n", init_file, strerror(errno));
 
@@ -291,19 +324,19 @@ ${fo_init_list}
 
 		l = line;
 		line[sizeof(line) - 1] = 0x7f;
-		memset(ret, 0x00, sizeof(ret));
-		memset(errn, 0x00, sizeof(errn));
-		memset(function, 0x00, sizeof(function));
-		memset(countdown, 0x00, sizeof(countdown));
+		real_memset(ret, 0x00, sizeof(ret));
+		real_memset(errn, 0x00, sizeof(errn));
+		real_memset(function, 0x00, sizeof(function));
+		real_memset(countdown, 0x00, sizeof(countdown));
 
-		if (fgets(line, sizeof(line), f) == NULL)
+		if (real_fgets(line, sizeof(line), f) == NULL)
 		{
-			int ret = feof(f);
-			fclose(f);
+			int ret = real_feof(f);
+			real_fclose(f);
 
 			if (ret)
 				return;
-			die("fgets() on %s failed: %s\n", init_file, strerror(errno));
+			die("fgets() on %s failed: %s\n", init_file, real_strerror(errno));
 		}
 
 		if (line[sizeof(line) - 1] == '\0' && line[sizeof(line) - 2] != '\n')
@@ -320,18 +353,21 @@ ${fo_init_list}
 		for (pos = 0; *l != ',' && *l != '\0'; errn[pos++] = *l++);
 		errn[pos - 1] = '\0'; /* remove last \n */
 
-		for (pos = 0; pos != fo_f_max; ++pos)
+		for (fo_pos = fo_f_max, pos = 0; pos != fo_f_max; ++pos)
 		{
-			if (strcmp(fo_info[pos].str, function))
+			if (real_strcmp(fo_info[pos].str, function))
 				continue;
 
 			fo_pos = pos;
 			break;
 		}
 
-		fo_info[fo_pos].countdown = atoi(countdown);
-		fo_info[fo_pos].errn = errno_str_to_int(errn);
-		fo_info[fo_pos].ret = strcmp(ret, "NULL") ? atol(ret) : FO_NULL;
+		if (fo_pos == fo_f_max)
+			die("function %s not overriden in fo.c\n", function);
+
+		fo_info[fo_pos].countdown = real_atoi(countdown);
+		fo_info[fo_pos].errn = errno_str_to_int(errn, real_strcmp);
+		fo_info[fo_pos].ret = real_strcmp(ret, "NULL") ? real_atol(ret) : FO_NULL;
 	}
 }
 
