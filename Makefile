@@ -5,6 +5,7 @@ DIST_DIR=libfo-$(VERSION)
 DESTDIR?=/usr/local
 RM ?= rm -f
 RMDIR ?= rmdir --ignore-fail-on-non-empty
+MKDIR ?= mkdir -p
 
 all: libfo.so
 
@@ -47,6 +48,14 @@ dist-all: dist-gzip dist-bzip2 dist-xz
 
 distclean: clean
 	$(RM) -r libfo-*
+
+distcheck: dist
+	$(RM) -r $(DIST_DIR)
+	tar xzf $(DIST_DIR).tar.gz
+	$(MAKE) -C $(DIST_DIR) check
+	$(MKDIR) $(DIST_DIR)/install
+	DESTDIR=$(DIST_DIR)/install $(MAKE) -C $(DIST_DIR) install
+	$(MAKE) -C $(DIST_DIR) distclean
 
 www:
 	./gen-download-page.sh
