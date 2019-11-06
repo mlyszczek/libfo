@@ -8,7 +8,7 @@ RM ?= rm -f
 all: libfo.so
 
 fo.c:
-	./fogen
+	./fogen -r.
 
 fo.o: fo.c
 	gcc -fPIC -c fo.c -o fo.o

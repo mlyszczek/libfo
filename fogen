@@ -53,6 +53,125 @@ def eprint(
 ):
 	print(*args, file=sys.stderr, **kwargs)
 
+## ==========================================================================
+#   Function removes conditionals from specified file. Conditional must be
+#   in format %{if <bool>} (...) %{fi}, and if <bool> is 0, all data between
+#   %{if} and %{fi} will be removed. Here are some examples.
+#
+#   example 1:
+#       %{if 0}
+#       some code
+#       more code
+#       %{fi}
+#       different cnode
+#
+#   will return
+#       different code
+#
+#   while example 2:
+#       %{if 1}
+#       some code
+#       more code
+#       %{fi}
+#       different cnode
+#
+#   will return:
+#       some code
+#       more code
+#       different code
+#
+#   This function is stupid and does not work with any variables, it is
+#   designed to work with stirng.subsitute(), so if you want variables use
+#   %{if ${some_variable}} and run the file through string.substitute()
+#   to change ${some_variable> to 0 or 1, and then run this function.
+#
+#   %{if} can be in the middle of string like
+#
+#   example 3:
+#       if (%{if 1}some_check ||%{fi} another_check)
+## ==========================================================================
+
+
+def process_conditionals(
+	content         # string on which to perform conditional removal
+):
+	inside_cond = 0 # flag to know if we are inside %{if} or not
+	cond_true = 0   # value of %{if} conditional
+	out = ""        # output file after processing
+	i = 0           # current file position
+	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+	while i < len(content):
+		if content[i] == '\n':
+			line_started = 1
+			out += content[i]
+			i += 1
+			continue
+
+		if inside_cond == 0:
+			# we are outside of conditional section, check if we are
+			# about to enter one
+			if not content[i: i + 5].startswith("%{if ") or \
+					content[i + 6] != "}":
+				# nope, current position is not "%{if " or there is no
+				# closing "}" character, so this is not conditional
+				line_started = 0
+				out += content[i]
+				i += 1
+				continue
+
+			# yes, content[i] is "%{if 1}" or "%{if 0}" we are dealing
+			# with conditional, read conditional value and set flag
+			# to know we are inside conditional now
+			cond_true = content[i + 5]
+			inside_cond = 1
+
+			# obviously we do not store conditional in out, so skip it
+			i += 7
+
+			if (i == 7 or content[i - 7 - 1] == "\n") and content[i] == "\n":
+				# unique situation, %{if N} is the only text in the
+				# line, so let's also remove a new line character
+				# that follows it
+				i += 1
+		else:
+			# we are inside conditional, let's look for closing %{fi}
+			# statement
+
+			if not content[i: i + 5].startswith("%{fi}"):
+				# does not look like and conditonal ending, but what
+				# should we do with data inside conditional?
+
+				if int(cond_true) != 0:
+					# true, we should store that content in out,
+					# otherwise we do nothing, data is not stored
+					# and we only increment i
+					out += content[i]
+
+				i += 1
+				continue
+
+			# we got ending "%{fi}", so simply skip it and mark
+			# we are out of conditional
+			i += 5
+			inside_cond = 0
+
+			if content[i - 5 - 1] == "\n" and content[i] == "\n":
+				# unique situation, %{fi} is the only text in the
+				# line, so let's also remove a new line character
+				# that follows it
+				i += 1
+				continue
+
+			if int(cond_true) == 0 and line_started and content[i] == "\n":
+				# remove whole line if the only thing we have there
+				# is conditional and that conditional is false, to
+				# avoid printing unnecessary blank lines.
+				i += 1
+
+	# parsing is done, return processed data
+	return out
+
 
 ## ==========================================================================
 #                                 __                __
@@ -134,16 +253,50 @@ db = []
 dbt = dict()
 dbt = [row for row in csv.DictReader(dbc.splitlines(), skipinitialspace=1)]
 
+fo_fgets_used = 0
+fo_strerror_used = 0
+fo_atoi_used = 0
+fo_fclose_used = 0
+fo_feof_used = 0
+fo_strcmp_used = 0
+fo_atol_used = 0
+fo_memset_used = 0
+used_funcs = []
+
+
 if len(flist) == 0:
-    db = dbt
+	db = dbt
+	for opt in dbt:
+		used_funcs.append(opt['fname'])
 else:
-    with open(flist) as fl:
-        for opt in dbt:
-            fl.seek(0)
-            for f in fl.read().splitlines():
-                if f == opt['fname']:
-                    db.append(opt)
-                    break
+	with open(flist) as fl:
+		used_funcs = fl.read().splitlines()
+		for opt in dbt:
+			fl.seek(0)
+			for f in fl.read().splitlines():
+				if f == opt['fname']:
+					db.append(opt)
+					break
+
+
+
+for f in used_funcs:
+	if f == "fgets":
+		fo_fgets_used = 1
+	elif f == "strerror":
+		fo_strerror_used = 1
+	elif f == "atoi":
+		fo_atoi_used = 1
+	elif f == "fclose":
+		fo_fclose_used = 1
+	elif f == "feof":
+		fo_feof_used = 1
+	elif f == "strcmp":
+		fo_strcmp_used = 1
+	elif f == "atol":
+		fo_atol_used = 1
+	elif f == "memset":
+		fo_memset_used = 1
 
 
     ## ==================================================================
@@ -262,8 +415,20 @@ with open(resdir + "/fo.c.in") as file_in, open(outc, "w") as file_out:
 	d['fo_init_list'] = fo_init_list
 	d['fo_overrides'] = fo_overrides
 
+	d['fo_fgets_used'] = fo_fgets_used
+	d['fo_strerror_used'] = fo_strerror_used
+	d['fo_atoi_used'] = fo_atoi_used
+	d['fo_fclose_used'] = fo_fclose_used
+	d['fo_feof_used'] = fo_feof_used
+	d['fo_strcmp_used'] = fo_strcmp_used
+	d['fo_atol_used'] = fo_atol_used
+	d['fo_memset_used'] = fo_memset_used
+
 	# and replace all
-	file_out.write(Template(file_in.read()).substitute(d))
+	content = Template(file_in.read()).substitute(d)
+
+	# now replace all the conditionals
+	file_out.write(process_conditionals(content))
 
 
 with open(resdir + "/fo.h.in") as file_in, open(outh, "w") as file_out:
