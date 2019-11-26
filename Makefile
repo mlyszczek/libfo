@@ -74,12 +74,17 @@ clean:
 	make clean -C www
 
 install:
+	if [ x$$(echo "$(DESTDIR)" | cut -c1) != x/ ]; then \
+		echo "DESTDIR must be an absolute path"; \
+		exit 1; \
+	fi
 	if [ "$(BASE_VERSION)" = "9999" ]; then \
 		sed -i 's/^version="9999\(-[[:alnum:]]\+\)\?"$$/version="9999-$(GITSHA)"/' fogen; \
 	fi
 	for f in custom/*; do \
 		install -m0644 -D $$f $(DESTDIR)/share/fogen/$$f; \
 	done
+	sed -i '#^prefix = "/usr/local"$$#prefix = $(DESTDIR)#' fogen
 	install -m0755 -D fogen         $(DESTDIR)/bin/fogen
 	install -m0644 -D fo.c.in       $(DESTDIR)/share/fogen/fo.c.in
 	install -m0644 -D fo.h.in       $(DESTDIR)/share/fogen/fo.h.in
