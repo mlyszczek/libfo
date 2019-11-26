@@ -57,7 +57,7 @@ distcheck: dist
 	tar xzf $(DIST_DIR).tar.gz
 	$(MAKE) -C $(DIST_DIR) check
 	$(MKDIR) $(DIST_DIR)/install
-	DESTDIR=install $(MAKE) -C $(DIST_DIR) install
+	DESTDIR=$$(pwd)/install $(MAKE) -C $(DIST_DIR) install
 	$(MAKE) -C $(DIST_DIR) distclean
 
 www:
